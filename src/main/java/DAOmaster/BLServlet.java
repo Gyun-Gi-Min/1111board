@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
-
+//List
 @WebServlet("/List")
 public class BLServlet extends HttpServlet {
     @Override

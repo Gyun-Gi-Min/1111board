@@ -53,8 +53,5 @@ public class BUpServlet extends HttpServlet {
                 res.sendRedirect("/Detail?iboard=" + Siboard);
                 break;
         }
-
-
-
     }
 }

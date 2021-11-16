@@ -22,9 +22,5 @@ public class BDelServlet extends HttpServlet {
                 res.sendRedirect("/List");
                 break;
         }
-
-
     }
-
-
 }

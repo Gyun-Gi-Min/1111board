@@ -7,8 +7,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DAO {
+
+    public static int insertBoard(boardVO aa){
+        Connection con = null;
+        PreparedStatement ps = null;
+        String sql = "INSERT INTO t_board (title, ctnt, writer) VALUES (?, ?, ?) ";
+
+        try{
+            con = DbUtils.getCon();
+            ps = con.prepareStatement(sql);
+            ps.setString(1, aa.getTitle());
+            ps.setString(2,aa.getCtnt());
+            ps.setString(3, aa.getWriter());
+            return ps.executeUpdate();
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            DbUtils.close(con,ps);
+        }return 0;
+
+    }
+
     public static List<boardVO> selList(){
-        List<boardVO> list = new ArrayList();
+        List<boardVO> list = new ArrayList(); // 전체다 가져옴
         Connection con = null; //연결
         PreparedStatement ps = null; // 쿼리 실행
         ResultSet rs = null; //정보 담는거?
@@ -65,48 +88,69 @@ public class DAO {
 
     }
 
-    public static int insertBoard(boardVO aa){
+//PK값 return
+    //이전글 iboard 값 가져오기
+    public static int selPrevIboard(boardVO param){
         Connection con = null;
         PreparedStatement ps = null;
-        String sql = "INSERT INTO t_board (title, ctnt, writer) VALUES (?, ?, ?) ";
+        ResultSet rs = null;
+        String sql = "SELECT iboard FROM t_board " +
+                " WHERE iboard > ? " +
+                " ORDER BY iboard " +
+                " LIMIT 1 ";
 
         try{
             con = DbUtils.getCon();
             ps = con.prepareStatement(sql);
-            ps.setString(1, aa.getTitle());
-            ps.setString(2,aa.getCtnt());
-            ps.setString(3, aa.getWriter());
-            return ps.executeUpdate();
+            ps.setInt(1,param.getIboard());
+            rs = ps.executeQuery();
+
+            if(rs.next()){ //쿼리문에서 받아오는건 iboard 값만 이므로 return iboard
+               int iboard = rs.getInt("iboard");
+               return iboard;
+            }
 
 
         }catch (Exception e){
             e.printStackTrace();
         }finally {
-            DbUtils.close(con,ps);
-        }return 0;
-
+            DbUtils.close(con,ps,rs);
+        }
+        return 0;
     }
 
-    public static int delBoard(int iboard){
-        Connection con =null;
+    //다음글 iboard 값 가져오기
+
+    public static int selNextIboard(boardVO param){
+        Connection con = null;
         PreparedStatement ps = null;
-        String sql = "DELETE FROM t_board WHERE iboard = ? ";
+        ResultSet rs = null;
+        String sql = "SELECT iboard FROM t_board " +
+                " WHERE iboard < ? " +
+                " ORDER BY iboard DESC " +
+                " LIMIT 1 ";
 
         try{
             con = DbUtils.getCon();
             ps = con.prepareStatement(sql);
-            ps.setInt(1, iboard);
+            ps.setInt(1,param.getIboard());
+            rs = ps.executeQuery();
 
-            return ps.executeUpdate();
-
+            if(rs.next()){   
+                int iboard = rs.getInt("iboard");
+                return iboard;
+            }
 
         }catch (Exception e){
             e.printStackTrace();
         }finally {
-            DbUtils.close(con,ps);
-        }return 0;
-
+            DbUtils.close(con,ps,rs);
+        }
+        return 0;
     }
+
+
+
 
     public static int upBoard(boardVO param){
         Connection con = null;
@@ -132,6 +176,28 @@ public class DAO {
 
 
     }
+
+    public static int delBoard(int iboard){
+        Connection con =null;
+        PreparedStatement ps = null;
+        String sql = "DELETE FROM t_board WHERE iboard = ? ";
+
+        try{
+            con = DbUtils.getCon();
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, iboard);
+
+            return ps.executeUpdate();
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            DbUtils.close(con,ps);
+        }return 0;
+
+    }
+
 
 
 
